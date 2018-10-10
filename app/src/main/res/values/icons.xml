@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="icon_order">&#xe760;</string>
+    <string name="icon_check">&#xe6de;</string>
+    <string name="icon_login_register">&#xe738;</string>
+    <string name="icon_help">&#xe740;</string>
+</resources>
