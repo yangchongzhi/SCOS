@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,79 +11,112 @@ import android.widget.EditText;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import es.source.code.activity.utils.Final;
+import es.source.code.model.User;
+import es.source.code.utils.Final;
+import es.source.code.utils.MyApplication;
 
 public class LoginOrRegister extends AppCompatActivity {
     private ProgressDialog pDialog = null;
-    private Button btn_login;
-    private EditText et_login_name;
-    private EditText et_login_password;
-    private final String ERROR_TIP = "输入不符合规则";
-    private  Button btn_return;
+    private Button loginBtn;
+    private Button returnBtn;
+    private Button registerBtn;
+
+    private EditText loginNameEt;
+    private EditText loginPasswordEt;
+
+    private EditText loginNameTipEt;
+    private EditText loginPasswordTipEt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_or_register);
-        btn_login = findViewById(R.id.btn_login);
-        btn_return = findViewById(R.id.btn_return);
-        et_login_name = findViewById(R.id.login_name);
-        et_login_password = findViewById(R.id.login_password);
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                // 检测输入是否合法
-                if (!checkInput(et_login_name.getText().toString())) {
-                    setError(et_login_name, false);
-                    et_login_name.clearFocus();
-                    return;
-                }
+        loginBtn = findViewById(R.id.btn_login);
+        returnBtn = findViewById(R.id.btn_return);
+        registerBtn = findViewById(R.id.btn_register);
 
-                if (!checkInput(et_login_password.getText().toString())) {
-                    setError(et_login_password, true);
-                    et_login_password.clearFocus();
-                    return;
-                }
+        loginNameEt = findViewById(R.id.login_name);
+        loginPasswordEt = findViewById(R.id.login_password);
+        loginNameTipEt = findViewById(R.id.login_name_tip);
+        loginPasswordTipEt = findViewById(R.id.login_password_tip);
 
-                // 显示进度条
-                showPressDialogAndToMainScreen();
-            }
-        });
-
-        btn_return.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginOrRegister.this, MainScreen.class);
-                intent.putExtra("msg_from_LoginOrRegister","Return");
-                setResult(Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE, intent);
-                finish();
-            }
-        });
-        et_login_password.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && et_login_password.getText().toString().contains(ERROR_TIP)) {
-                    et_login_password.setText("");
-                } else {
-                    // 此处为失去焦点时的处理内容
-                }
-            }
-        });
-
-        et_login_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && et_login_name.getText().toString().contains(ERROR_TIP)) {
-                    et_login_name.setText("");
-                } else {
-                    // 此处为失去焦点时的处理内容
-                }
-            }
-        });
+        // 绑定按钮点击事件
+        loginBtn.setOnClickListener(setBtnClick("login"));
+        returnBtn.setOnClickListener(setBtnClick("return"));
+        registerBtn.setOnClickListener(setBtnClick("register"));
+        // 输入框focus事件
+        loginPasswordEt.setOnFocusChangeListener(setEditTextFocus("password"));
+        loginNameEt.setOnFocusChangeListener(setEditTextFocus("name"));
     }
 
-    private void showPressDialogAndToMainScreen() {
+    private View.OnClickListener setBtnClick(final String flag) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (flag) {
+                    case "login":
+                        handleLoginOrRegister(true);
+                        break;
+                    case "register":
+                        handleLoginOrRegister(false);
+                        break;
+                    case "return":
+                        Intent intent = new Intent(LoginOrRegister.this, MainScreen.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Final.ActivityTransferInfo.FROM_LOR,Final.ActivityTransferInfo.LOR_BACK_TO_MAIN);
+                        intent.putExtras(bundle);
+                        setResult(Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE, intent);
+                        finish();
+                        break;
+
+                }
+            }
+        };
+
+    }
+
+    private void handleLoginOrRegister(boolean flag) {
+        String userName = loginNameEt.getText().toString();
+        // 检测输入是否合法
+        if (!checkInput(userName)) {
+            setError("name");
+            return;
+        }
+        String password = loginPasswordEt.getText().toString();
+        if (!checkInput(password)) {
+            setError("password");
+            return;
+        }
+        // 显示进度条
+        showPressDialogAndToMainScreen(recordUserInfo(userName, password, flag), flag);
+    }
+
+    private View.OnFocusChangeListener setEditTextFocus(final String flag) {
+        return new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                switch (flag) {
+                    case "name":
+                        if (hasFocus && !loginNameTipEt.getText().toString().equals("")) {
+                            loginNameTipEt.setText("");
+                            loginNameEt.setText("");
+                        }
+                        break;
+                    case "password":
+                        if (hasFocus && !loginPasswordTipEt.getText().toString().equals("")) {
+                            loginPasswordTipEt.setText("");
+                            loginPasswordEt.setText("");
+                        }
+                        break;
+                }
+
+            }
+        };
+    }
+
+    private void showPressDialogAndToMainScreen(final User loginUser,final boolean flag) {
         pDialog = new ProgressDialog(LoginOrRegister.this);
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
@@ -108,7 +139,10 @@ public class LoginOrRegister extends AppCompatActivity {
                     pDialog.cancel();
                     // 跳转到MainScreen
                     Intent intent = new Intent(LoginOrRegister.this, MainScreen.class);
-                    intent.putExtra("msg_from_LoginOrRegister","LoginSuccess");
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Final.ActivityTransferInfo.FROM_LOR,flag ? Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN : Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
+                    bundle.putSerializable("user", loginUser);
+                    intent.putExtras(bundle);
                     setResult(Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE, intent);
                     finish();
                 } catch (InterruptedException e) {
@@ -130,11 +164,25 @@ public class LoginOrRegister extends AppCompatActivity {
         return matcher.matches();
     }
 
-    private void setError(EditText et,boolean flag) {
-        et.setText(ERROR_TIP);
-//        if (flag) {
-//            et.setInputType(InputType.TYPE_CLASS_TEXT);
-//        }
+    private void setError(String type) {
+        if(type.equals("name")) {
+            loginNameTipEt.setText(Final.AppTip.INPUT_ERROR_TIP);
+            loginNameEt.clearFocus();
+        }
+        if(type.equals("password")) {
+            loginPasswordTipEt.setText(Final.AppTip.INPUT_ERROR_TIP);
+            loginPasswordEt.clearFocus();
+        }
+
+    }
+
+    private User recordUserInfo(String userName, String password, boolean oldUser) {
+        User loginUser = new User();
+        loginUser.setUserName(userName);
+        loginUser.setPassword(password);
+        loginUser.setOldUser(oldUser);
+        MyApplication.getApp().setUser(loginUser);
+        return loginUser;
     }
 }
 

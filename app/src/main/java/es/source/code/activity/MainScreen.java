@@ -1,102 +1,89 @@
 package es.source.code.activity;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.GridView;
-import java.util.Map;
-import es.source.code.activity.adapter.MainScreenGvAdapter;
-import es.source.code.activity.utils.Final;
+import android.widget.Toast;
+
+import es.source.code.adapter.MainScreenGvAdapter;
+import es.source.code.model.User;
+import es.source.code.utils.Final;
 
 public class MainScreen extends AppCompatActivity {
 
-//    private Button btn_order;
-//    private Button btn_check;
-//    private Button btn_login_register;
+    private User user = null;
     private GridView gridView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
-//        btn_order = findViewById(R.id.btn_order);
-//        btn_check = findViewById(R.id.btn_check);
-//        btn_login_register = findViewById(R.id.btn_login_register);
-//        btn_login_register.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivityForResult(new Intent(MainScreen.this, LoginOrRegister.class), 1);
-//            }
-//        });
 
         // 初始化导航栏
         initNavigator();
-
-//        setBtnVisibility();
+        // 处理获取的message
+        receiveMessage();
     }
 
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        String result = data.getStringExtra("msg_from_LoginOrRegister");
-        Log.d("#######################", result);
-//        if (result.equals("LoginSuccess")){
-//            if (btn_order.getVisibility() == View.INVISIBLE){
-//                btn_order.setVisibility(View.VISIBLE);
-//            }
-//            if (btn_check.getVisibility() == View.INVISIBLE){
-//                btn_check.setVisibility(View.VISIBLE);
-//            }
-//        }
-    }
 
     private void initNavigator() {
         gridView = findViewById(R.id.grid_view);
-        MainScreenGvAdapter adapter = new MainScreenGvAdapter(MainScreen.this, new MainScreenGvAdapter.OnNavigatorItemClick(){
-            @Override
-            public void onClick(Map<String, Object> btnMap) {
-                OnNavigatorItemClick(btnMap);
-            }
-        });
+        final MainScreenGvAdapter adapter = new MainScreenGvAdapter(MainScreen.this);
         gridView.setAdapter(adapter);
         // 设置点击事件
         gridView.setOnItemClickListener(adapter);
     }
 
-    private void OnNavigatorItemClick(Map<String, Object> btnMap) {
-        switch(btnMap.get("ENName").toString()) {
-            case "order":
-                Log.d("order", "order");
-                break;
-            case "check":
-                Log.d("check", "check");
-                break;
-            case "loginOrRegister":
-                Log.d("loginOrRegister", "loginOrRegister");
-                startActivityForResult(new Intent(MainScreen.this, LoginOrRegister.class), Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE);
-                break;
-            case "help":
-                Log.d("help", "help");
-                break;
+
+    // 接收startActivity
+    private void receiveMessage() {
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(Final.ActivityTransferInfo.FROM_ENTRY);
+        if (!message.equals(Final.ActivityTransferInfo.ENTRY_TO_MAIN)) {
+            // 在进入页面后不能马上获取gridView的元素，要延迟一下
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        gridView.getChildAt(0).findViewById(R.id.btn).setVisibility(View.INVISIBLE);
+                        gridView.getChildAt(1).findViewById(R.id.btn).setVisibility(View.INVISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            },50);
         }
     }
 
     @Override
-    public void onActivityReenter(int resultCode, Intent data) {
-        Log.d("#########", data.getStringExtra("msg_from_LoginOrRegister"));
-//        super.onActivityReenter(resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        String message = data.getStringExtra(Final.ActivityTransferInfo.FROM_LOR);
+        // 如果 返回数据为“LoginSuccess”，则检查“点菜”和“查看订单”的状态
+        boolean isLogin = message.equals(Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN);
+        boolean isRegister = message.equals(Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
+        Log.d("###",String.valueOf(isRegister));
+        if (isLogin || isRegister) {
+            if(isRegister) Toast.makeText(MainScreen.this, Final.AppTip.REGISTER_TIP, Toast.LENGTH_LONG).show();
+            user = (User) data.getSerializableExtra("user");
+
+            Button orderBtn = gridView.getChildAt(0).findViewById(R.id.btn);
+            if (orderBtn.getVisibility() == View.INVISIBLE){
+                orderBtn.setVisibility(View.VISIBLE);
+            }
+            Button checkBtn = gridView.getChildAt(1).findViewById(R.id.btn);
+            if (checkBtn.getVisibility() == View.INVISIBLE) {
+                checkBtn.setVisibility(View.VISIBLE);
+            }
+        } else {
+            user = null;
+        }
     }
 
-    //    private void setBtnVisibility() {
-//        Intent intent = getIntent();
-//        String data = intent.getStringExtra("msg_from_SCOSEntry");
-//        Log.d("MainScreenActivity", data);
-//        if (!data.equals("FromEntry")) {
-//            btn_order.setVisibility(View.INVISIBLE);
-//            btn_check.setVisibility(View.INVISIBLE);
-//        }
-//    }
 
 }

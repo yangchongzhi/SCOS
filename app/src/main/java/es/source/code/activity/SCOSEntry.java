@@ -3,10 +3,10 @@ package es.source.code.activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.widget.Toast;
+
+import es.source.code.utils.Final;
 
 public class SCOSEntry extends AppCompatActivity {
 
@@ -24,10 +24,9 @@ public class SCOSEntry extends AppCompatActivity {
                 // e1: 第一次按下的位置 e2:当手离开屏幕时的位置  velocityX:沿x轴的速度  velocityY:沿Y轴方向的速度
 
                 if ((e1.getRawX() - e2.getRawX()) >200) {
-                    String msg = "RFFHGF";
                     Intent intent = new Intent(SCOSEntry.this, MainScreen.class);
                     intent.setAction("scos.permission.ACCESS_SCOS");
-                    intent.putExtra("msg_from_SCOSEntry", msg);
+                    intent.putExtra(Final.ActivityTransferInfo.FROM_ENTRY, Final.ActivityTransferInfo.ENTRY_TO_MAIN);
                     startActivity(intent);
                     return true;
                 }
