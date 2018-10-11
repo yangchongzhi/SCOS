@@ -44,7 +44,7 @@ public class FoodDetailFragment extends Fragment {
         imageView.setImageResource(R.drawable.logo1);
         etRemark.setText("");
 
-        if (food.getId().equals("hmjmf")) {
+        if (foodIsOrdered(food)) {
             btnCancel.setVisibility(View.VISIBLE);
             btnOrder.setVisibility(View.GONE);
         } else {
@@ -68,6 +68,10 @@ public class FoodDetailFragment extends Fragment {
 
         return view;
 
+    }
+
+    private boolean foodIsOrdered(Food food) {
+       return food.getId().equals("hmjmf");
     }
 }
 

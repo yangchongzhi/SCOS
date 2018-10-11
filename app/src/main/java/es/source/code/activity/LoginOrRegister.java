@@ -88,8 +88,10 @@ public class LoginOrRegister extends AppCompatActivity {
             setError("password");
             return;
         }
+        // 记录用户信息
+        recordUserInfo(userName, password, flag);
         // 显示进度条
-        showPressDialogAndToMainScreen(recordUserInfo(userName, password, flag), flag);
+        showPressDialogAndToMainScreen(flag);
     }
 
     private View.OnFocusChangeListener setEditTextFocus(final String flag) {
@@ -116,7 +118,7 @@ public class LoginOrRegister extends AppCompatActivity {
         };
     }
 
-    private void showPressDialogAndToMainScreen(final User loginUser,final boolean flag) {
+    private void showPressDialogAndToMainScreen(final boolean flag) {
         pDialog = new ProgressDialog(LoginOrRegister.this);
         pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
@@ -141,7 +143,6 @@ public class LoginOrRegister extends AppCompatActivity {
                     Intent intent = new Intent(LoginOrRegister.this, MainScreen.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(Final.ActivityTransferInfo.FROM_LOR,flag ? Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN : Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
-                    bundle.putSerializable("user", loginUser);
                     intent.putExtras(bundle);
                     setResult(Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE, intent);
                     finish();
@@ -176,13 +177,12 @@ public class LoginOrRegister extends AppCompatActivity {
 
     }
 
-    private User recordUserInfo(String userName, String password, boolean oldUser) {
+    private void recordUserInfo(String userName, String password, boolean oldUser) {
         User loginUser = new User();
         loginUser.setUserName(userName);
         loginUser.setPassword(password);
         loginUser.setOldUser(oldUser);
         MyApplication.getApp().setUser(loginUser);
-        return loginUser;
     }
 }
 

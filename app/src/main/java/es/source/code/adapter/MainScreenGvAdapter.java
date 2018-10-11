@@ -3,6 +3,7 @@ package es.source.code.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +73,7 @@ public class MainScreenGvAdapter extends BaseAdapter implements AdapterView.OnIt
         Drawable drawable = context.getResources().getDrawable(ResourceOperation.getDrawable(btnMap.get("icon").toString(), "drawable"));
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         holder.btn.setCompoundDrawables(drawable,null, null, null);
+        setBtnBackGroundColor(holder.btn, position);
         return convertView;
     }
 
@@ -103,6 +105,12 @@ public class MainScreenGvAdapter extends BaseAdapter implements AdapterView.OnIt
         helpMap.put("ENName", "help");
         helpMap.put("icon", "ic_help_blue");
         btnList.add(helpMap);
+    }
+
+
+    private void setBtnBackGroundColor(Button btn, int position) {
+        String colors[] = { "#DBDBDB", "#CAE1FF", "#EEE685", "#E0FFFF"};
+        btn.setBackgroundColor(Color.parseColor(colors[position]));
     }
 
     @Override

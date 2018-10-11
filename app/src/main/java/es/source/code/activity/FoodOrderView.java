@@ -23,7 +23,6 @@ public class FoodOrderView extends AppCompatActivity {
         setContentView(R.layout.activity_food_order_view);
 
         user = MyApplication.getApp().getUser();
-
         vp = findViewById(R.id.vp);
         tl = findViewById(R.id.tl);
         tl.setupWithViewPager(vp);

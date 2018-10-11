@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -16,8 +18,6 @@ import es.source.code.model.User;
 import es.source.code.utils.Final;
 
 public class MainScreen extends AppCompatActivity {
-
-    private User user = null;
     private GridView gridView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class MainScreen extends AppCompatActivity {
 
     private void initNavigator() {
         gridView = findViewById(R.id.grid_view);
-        final MainScreenGvAdapter adapter = new MainScreenGvAdapter(MainScreen.this);
+        MainScreenGvAdapter adapter = new MainScreenGvAdapter(MainScreen.this);
         gridView.setAdapter(adapter);
         // 设置点击事件
         gridView.setOnItemClickListener(adapter);
@@ -61,14 +61,20 @@ public class MainScreen extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        String message = data.getStringExtra(Final.ActivityTransferInfo.FROM_LOR);
-        // 如果 返回数据为“LoginSuccess”，则检查“点菜”和“查看订单”的状态
-        boolean isLogin = message.equals(Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN);
-        boolean isRegister = message.equals(Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
+        String message;
+        boolean isLogin = false;
+        boolean isRegister = false;
+        try {
+            message = data.getStringExtra(Final.ActivityTransferInfo.FROM_LOR);
+            // 如果 返回数据为“LoginSuccess”，则检查“点菜”和“查看订单”的状态
+            isLogin = message.equals(Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN);
+            isRegister = message.equals(Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (isLogin || isRegister) {
             if(isRegister) Toast.makeText(MainScreen.this, Final.AppTip.REGISTER_TIP, Toast.LENGTH_LONG).show();
-            user = (User) data.getSerializableExtra("user");
-
             Button orderBtn = gridView.getChildAt(0).findViewById(R.id.btn);
             if (orderBtn.getVisibility() == View.INVISIBLE){
                 orderBtn.setVisibility(View.VISIBLE);
@@ -77,8 +83,6 @@ public class MainScreen extends AppCompatActivity {
             if (checkBtn.getVisibility() == View.INVISIBLE) {
                 checkBtn.setVisibility(View.VISIBLE);
             }
-        } else {
-            user = null;
         }
     }
 

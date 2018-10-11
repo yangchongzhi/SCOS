@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="50dp"
         android:layout_alignParentRight="true">
     </android.support.v7.widget.RecyclerView>
     <LinearLayout
@@ -16,7 +17,7 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="#fff"
+        android:background="@drawable/top_border"
         >
 
         <LinearLayout
