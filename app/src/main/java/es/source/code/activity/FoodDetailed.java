@@ -28,7 +28,7 @@ public class FoodDetailed extends AppCompatActivity {
 
     private List<Food> getData() {
         List<Food> list = new ArrayList<>();
-        list.add(new Food("hmjmf", "黄猛击米版面", 22.0, "好吃", "@drawable/logo1"));
+        list.add(new Food("hmjmf", "黄焖鸡米饭", 22.0, "好吃", "@drawable/logo1"));
         list.add(new Food("hcd1", "好吃的1", 22.0, "好吃", "@drawable/logo1"));
         list.add(new Food("hcd2", "好吃的2", 22.0, "好吃", "@drawable/logo1"));
         list.add(new Food("hcd3", "好吃的3", 22.0, "好吃", "@drawable/logo1"));

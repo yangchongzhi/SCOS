@@ -30,8 +30,6 @@ public class MainScreen extends AppCompatActivity {
         receiveMessage();
     }
 
-
-
     private void initNavigator() {
         gridView = findViewById(R.id.grid_view);
         final MainScreenGvAdapter adapter = new MainScreenGvAdapter(MainScreen.this);
@@ -67,7 +65,6 @@ public class MainScreen extends AppCompatActivity {
         // 如果 返回数据为“LoginSuccess”，则检查“点菜”和“查看订单”的状态
         boolean isLogin = message.equals(Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN);
         boolean isRegister = message.equals(Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
-        Log.d("###",String.valueOf(isRegister));
         if (isLogin || isRegister) {
             if(isRegister) Toast.makeText(MainScreen.this, Final.AppTip.REGISTER_TIP, Toast.LENGTH_LONG).show();
             user = (User) data.getSerializableExtra("user");
