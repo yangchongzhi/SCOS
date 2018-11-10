@@ -1,6 +1,8 @@
 package es.source.code.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import es.source.code.adapter.MainScreenGvAdapter;
 import es.source.code.model.User;
@@ -41,9 +46,11 @@ public class MainScreen extends AppCompatActivity {
 
     // 接收startActivity
     private void receiveMessage() {
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(Final.ActivityTransferInfo.FROM_ENTRY);
-        if (!message.equals(Final.ActivityTransferInfo.ENTRY_TO_MAIN)) {
+//        Intent intent = getIntent();
+//        String message = intent.getStringExtra(Final.ActivityTransferInfo.FROM_ENTRY);
+//        if (!message.equals(Final.ActivityTransferInfo.ENTRY_TO_MAIN)) {
+        int loginState = getLoginState();
+        if(loginState != 1) {
             // 在进入页面后不能马上获取gridView的元素，要延迟一下
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -66,12 +73,16 @@ public class MainScreen extends AppCompatActivity {
         boolean isRegister = false;
         try {
             message = data.getStringExtra(Final.ActivityTransferInfo.FROM_LOR);
-            // 如果 返回数据为“LoginSuccess”，则检查“点菜”和“查看订单”的状态
             isLogin = message.equals(Final.ActivityTransferInfo.LOR_LOGIN_TO_MAIN);
             isRegister = message.equals(Final.ActivityTransferInfo.LOR_REGISTER_TO_MAIN);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // 通过loginState判断状态
+        boolean loginState = getLoginState() == 1;
+        isLogin = isLogin && loginState;
+        isRegister = isRegister && loginState;
 
         if (isLogin || isRegister) {
             if(isRegister) Toast.makeText(MainScreen.this, Final.AppTip.REGISTER_TIP, Toast.LENGTH_LONG).show();
@@ -86,5 +97,8 @@ public class MainScreen extends AppCompatActivity {
         }
     }
 
-
+    private int getLoginState() {
+        SharedPreferences sharedPreferences = getSharedPreferences(Final.SCOS_SP_Name, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("loginState", 0);
+    }
 }

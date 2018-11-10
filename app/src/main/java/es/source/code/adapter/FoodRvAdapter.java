@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import es.source.code.activity.R;
@@ -37,6 +40,7 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.Holder> {
         Food food = list.get(i);
         holder.nameTextView.setText(food.getName());
         holder.priceTextView.setText(food.getPrice().toString());
+        holder.countTextView.setText(food.getCount() + "");
         holder.itemView.setTag(i);
         holder.orderBtn.setTag(i);
     }
@@ -49,12 +53,15 @@ public class FoodRvAdapter extends RecyclerView.Adapter<FoodRvAdapter.Holder> {
     class Holder extends RecyclerView.ViewHolder implements  View.OnClickListener{
         private TextView nameTextView;
         private TextView priceTextView;
+        private TextView countTextView;
         private Button orderBtn;
         private LinearLayout linearLayout;
         Holder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.name);
             priceTextView = itemView.findViewById(R.id.price);
+            countTextView = itemView.findViewById(R.id.count);
+
             orderBtn = itemView.findViewById(R.id.list_btn_order);
             linearLayout = itemView.findViewById(R.id.list_item_container);
             // 添加点击事件

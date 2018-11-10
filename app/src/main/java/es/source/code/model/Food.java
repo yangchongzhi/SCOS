@@ -34,11 +34,24 @@ public class Food {
         this.remark = remark;
     }
 
-    public Food(String id, String name, Double price) {
+    public Food(String id, String name, Double price, int count) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.count = count;
     }
+
+    public Food(String id, int count) {
+        this.id = id;
+        this.count = count;
+    }
+
+    public Food(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Food() {}
 
     public String getName() {
         return name;

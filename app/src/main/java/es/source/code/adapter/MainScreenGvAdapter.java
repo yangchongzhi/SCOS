@@ -21,6 +21,7 @@ import es.source.code.activity.FoodOrderView;
 import es.source.code.activity.FoodView;
 import es.source.code.activity.LoginOrRegister;
 import es.source.code.activity.R;
+import es.source.code.activity.SCOSHelper;
 import es.source.code.utils.Final;
 import es.source.code.utils.ResourceOperation;
 
@@ -130,13 +131,14 @@ public class MainScreenGvAdapter extends BaseAdapter implements AdapterView.OnIt
                 (((Activity) context)).startActivityForResult(intent, Final.ActivityRequestCode.LOGIN_OR_REGISTER_CODE);
                 break;
             case "help":
-                Log.d("help", "help");
+                intent = new Intent(context, SCOSHelper.class);
+                context.startActivity(intent);
                 break;
         }
     }
 
 
-    class Holder {
+    private class Holder {
         Button btn;
 
         Holder(View view) {

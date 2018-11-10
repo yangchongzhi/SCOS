@@ -33,6 +33,20 @@
                     android:height="50dp"
                     android:hint="登录密码"/>
 
+                <EditText
+                    android:id="@+id/login_tip"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="13sp"
+                    android:visibility="invisible"
+                    android:background="@null"
+                    android:textColor="#ff0000"
+                    android:focusable="false"
+                    android:height="20dp"
+                    android:text="用户名或密码错误"/>
+
                 <Button
                     android:id="@+id/btn_login"
                     android:layout_width="200dp"
@@ -41,12 +55,12 @@
                     android:text="登录"
                     />
 
-            <Button
-                android:id="@+id/btn_register"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="注册"
+                <Button
+                    android:id="@+id/btn_register"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="注册"
                 />
 
                 <Button

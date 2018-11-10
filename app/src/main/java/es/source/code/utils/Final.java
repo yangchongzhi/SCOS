@@ -1,6 +1,9 @@
 package es.source.code.utils;
 
 public class Final {
+
+    public static final String SCOS_SP_Name = "scos_sp";
+
     public static class ActivityRequestCode {
         public static final int LOGIN_OR_REGISTER_CODE = 0;
         public static final int HELP_CODE = 1;
@@ -30,8 +33,26 @@ public class Final {
 
     }
 
+    public static class HelperInfo {
+        public static final String PHONE = "5554";
+        public static final String MESSAGE = "test scos helper";
+        public static final String MAIL_OK_TIP = "test scos helper";
+
+    }
+
     public static class FoodArgs {
         public static final String[] CATEGORY_LIST = {"冷菜", "热菜", "海鲜", "酒水"};
         public static final String[] FOOD_ORDERED_STATE = {"未下单菜", "已下单菜"};
+    }
+
+    public static class HandlerMessage {
+        public static final int START_THREAD = 1;
+        public static final int STOP_THREAD = 0;
+        public static final int SENT_APP = 10;
+
+    }
+
+    public static class NotifyId {
+        public static final int NEW_FOOD = 1;
     }
 }

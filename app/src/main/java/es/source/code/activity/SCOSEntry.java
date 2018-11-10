@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import es.source.code.service.UpdateService;
 import es.source.code.utils.Final;
 
 public class SCOSEntry extends AppCompatActivity {
@@ -34,6 +35,8 @@ public class SCOSEntry extends AppCompatActivity {
             }
         });
 
+        Intent it = new Intent(this, UpdateService.class);
+        startService(it);
     }
 
     @Override

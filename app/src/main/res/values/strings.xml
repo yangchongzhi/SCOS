@@ -3,4 +3,5 @@
     <string name="title_activity_food_view">FoodView</string>
     <string name="title_activity_food_detailed">FoodDetailed</string>
     <string name="title_activity_food_order_view">FoodOrderView</string>
+    <string name="title_activity_scoshelper">SCOSHelper</string>
 </resources>

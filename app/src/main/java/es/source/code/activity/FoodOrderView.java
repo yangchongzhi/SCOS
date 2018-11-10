@@ -5,8 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import es.source.code.adapter.FoodOrderViewPagerAdapter;
+import es.source.code.model.Food;
 import es.source.code.model.User;
 import es.source.code.utils.Final;
 import es.source.code.utils.MyApplication;
@@ -31,6 +36,11 @@ public class FoodOrderView extends AppCompatActivity {
         // 设置viewPager显示
         setViewPager();
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void handleFoodInfo(Food food) {
+        Log.d(food.getName(), food.getPrice().toString());
     }
 
     private void setViewPager() {

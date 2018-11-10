@@ -2,27 +2,34 @@ package es.source.code.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import es.source.code.adapter.FoodViewPagerAdapter;
-import es.source.code.model.User;
+import es.source.code.model.Food;
+import es.source.code.service.ServerObserverService;
 import es.source.code.utils.Final;
-import es.source.code.utils.MyApplication;
 
 public class FoodView extends AppCompatActivity {
-
+    private static EventBus eventBus;
+    private Intent serviceIntent;
     private ViewPager vp;
     private TabLayout tl;
-    private User user;
     private Button btnOrderedFood;
     private Button btnOrderCheck;
     private Button btnCallService;
-    private Toolbar toolbar;
+    private Button btnStartRefresh;
+    private Button btnStopRefresh;
 
 
     @Override
@@ -30,7 +37,10 @@ public class FoodView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_view);
 
-        user = MyApplication.getApp().getUser();
+        eventBus = EventBus.getDefault();
+        serviceIntent = new Intent(this, ServerObserverService.class);
+        startService(serviceIntent);
+
         // 初始化ViewPager
         vp = findViewById(R.id.vp);
         tl = findViewById(R.id.tl);
@@ -41,17 +51,16 @@ public class FoodView extends AppCompatActivity {
         btnOrderedFood = findViewById(R.id.btn_ordered_food);
         btnOrderCheck = findViewById(R.id.btn_order_check);
         btnCallService = findViewById(R.id.btn_call_service);
+        btnStartRefresh = findViewById(R.id.btn_start_update);
+        btnStopRefresh = findViewById(R.id.btn_stop_update);
         bindBtnClick();
 
-        toolbar =  findViewById(R.id.toolbar);
+    }
 
-
-//        toolbar.setTitle(R.string.app_name);
-//        toolbar.setNavigationIcon(R.mipmap.ic_launcher);
-
-//        setSupportActionBar(toolbar);//如果需要给toolbar设置事件监听，需要将toolbar设置支持actionbar
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(serviceIntent);
     }
 
     private void bindBtnClick() {
@@ -71,6 +80,13 @@ public class FoodView extends AppCompatActivity {
                         intent.putExtra(Final.ActivityTransferInfo.FROM_FV, Final.ActivityTransferInfo.FV_TO_ORDER);
                         startActivity(intent);
                         break;
+                    case R.id.btn_start_update:
+                    case R.id.btn_stop_update:
+                        boolean flag = v.getId() == R.id.btn_start_update;
+                        eventBus.post(new NotifyUpdateStatus(flag ? 1 : 0));
+                        btnStopRefresh.setVisibility(flag ? View.VISIBLE : View.INVISIBLE);
+                        btnStartRefresh.setVisibility(flag ? View.INVISIBLE : View.VISIBLE);
+                        break;
                     case R.id.btn_call_service:
                         break;
                 }
@@ -80,7 +96,19 @@ public class FoodView extends AppCompatActivity {
         btnOrderedFood.setOnClickListener(onClick);
         btnOrderCheck.setOnClickListener(onClick);
         btnCallService.setOnClickListener(onClick);
+        btnStartRefresh.setOnClickListener(onClick);
+        btnStopRefresh.setOnClickListener(onClick);
     }
 
+    public static class NotifyUpdateStatus {
+        private int status;
+        public NotifyUpdateStatus(int status) {
+            this.status = status;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+    }
 
 }
